@@ -13,6 +13,18 @@ def __getattr__(name):
     elif name == "RecordingSync":
         from .sync import RecordingSync
         return RecordingSync
+    elif name == "LLMVision":
+        from .vision import LLMVision
+        return LLMVision
+    elif name == "IntelligentScreen":
+        from .android import IntelligentScreen
+        return IntelligentScreen
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-__all__ = ["TapoCamera", "StreamCapture", "RecordingSync"]
+__all__ = [
+    "TapoCamera",
+    "StreamCapture",
+    "RecordingSync",
+    "LLMVision",
+    "IntelligentScreen",
+]

@@ -191,15 +191,25 @@ class AndroidController:
         """Press power button."""
         self.key_event(26)  # KEYCODE_POWER
 
-    def screenshot(self, local_path: str | Path) -> Path:
+    def screenshot(
+        self,
+        local_path: str | Path,
+        max_dimension: int | None = 1900,
+    ) -> Path:
         """Take screenshot and pull to local machine.
 
         Args:
             local_path: Local path to save screenshot
+            max_dimension: Maximum dimension (width or height) for the screenshot.
+                          If either dimension exceeds this, image is resized proportionally.
+                          Set to None to disable resizing. Default 1900 to stay under
+                          Claude API's 2000px limit for many-image requests.
 
         Returns:
             Path to saved screenshot
         """
+        from PIL import Image
+
         local_path = Path(local_path)
         local_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -220,6 +230,21 @@ class AndroidController:
 
         # Clean up remote file
         self.shell(f"rm {remote_path}")
+
+        # Resize if needed to stay under API limits
+        if max_dimension is not None:
+            img = Image.open(local_path)
+            width, height = img.size
+            if width > max_dimension or height > max_dimension:
+                # Calculate new dimensions maintaining aspect ratio
+                if width > height:
+                    new_width = max_dimension
+                    new_height = int(height * (max_dimension / width))
+                else:
+                    new_height = max_dimension
+                    new_width = int(width * (max_dimension / height))
+                img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                img.save(local_path)
 
         return local_path
 

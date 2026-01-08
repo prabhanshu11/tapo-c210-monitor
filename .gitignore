@@ -8,3 +8,12 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Private progress tracking (not committed)
+progress_actual.md
+apks/*.xapk
+apks/*.apk
+apks/tapo-apk-*/
+apks/*.tar.gz
+screenshots/*.png
+!screenshots/login-flow/
