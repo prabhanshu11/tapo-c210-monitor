@@ -2,70 +2,59 @@
 
 ## Emulator: emulator-5554
 
-## Current State: WORKING
+## Current State: IDLE (screencap issue)
 
 ## Current Task
-screen: smart-tab
-started: 2026-01-09
+screen: none
+started: -
 
-## Last Action
-type: documentation + screenshot
-coords: -
-result: SUCCESS - documented me-tab screen
+## Session Summary
+Documented 5 screens with full UI element mapping and tap coordinates.
 
 ## Screenshots Captured (verbose names)
 - tapo-home-screen-device-grid-favorites-tab.png
 - tapo-camera-live-stream-playback-controls.png
 - tapo-cameras-tab-detection-mode-home-away.png
-- tapo-me-tab-profile-settings-account-worker1.png
+- tapo-smart-tab-automations-schedules-worker1.png
+- (me-tab screenshot failed - 0 bytes due to screencap issue)
 
 ## Documented Screens
-- home (screens/home-worker-1.md)
-- camera-live (screens/camera-live-worker-1.md)
-- cameras-tab (screens/cameras-tab-worker-1.md)
-- me-tab (screens/me-tab-worker-1.md)
+1. **home** (screens/home-worker-1.md)
+   - Device grid, favorites/all devices/room tabs
+   - Bottom navigation, header controls
 
-## User Actions File
-- user-actions.md - Quick reference for automation tap coordinates (UPDATED)
+2. **camera-live** (screens/camera-live-worker-1.md)
+   - Video player with PTZ controls
+   - Media controls (photo, record, mic, voice call)
+   - Control panel (talk, pan/tilt, alarm, privacy)
 
-## Discovered Screens (this session)
-### From home:
-- camera-live - DOCUMENTED
-- cameras-tab - DOCUMENTED
-- me-tab - DOCUMENTED
-- device-options (long-press camera card)
-- notifications (tap notification bell)
-- add-device (tap + button)
-- family-picker (tap "My home" selector)
-- room-management (tap "More" in tabs)
-- vacuums-tab (tap Vacuums in bottom nav)
-- smart-tab (tap Smart in bottom nav)
+3. **cameras-tab** (screens/cameras-tab-worker-1.md)
+   - Detection Mode (Home/Away)
+   - Cameras/Cloud Activity sub-tabs
+   - Device list
 
-### From camera-live:
-- device-settings (tap settings icon) - CAUSED ANR
-- pan-tilt-controls (tap Pan & Tilt button)
-- playback (tap Playback & Download)
-- fullscreen-live (tap fullscreen button)
-- multi-view (tap multi-view button)
-- video-mode-picker (tap video mode selector)
-- tapo-care (tap Tapo Care button)
-- volume-control (tap mic volume button)
+4. **me-tab** (screens/me-tab-worker-1.md)
+   - Profile section
+   - Tapo Care subscription
+   - Device management (playback, memory)
+   - Settings (firmware, notifications, sharing)
 
-### From cameras-tab:
-- cloud-activity-tab (tap Cloud Activity sub-tab)
-- home-mode-settings (tap Home Mode settings icon)
-- away-mode-settings (tap Away Mode settings icon)
-- tapo-care-upgrade (tap Tapo Care banner)
-- add-camera-flow (tap Add Camera button)
+5. **smart-tab** (screens/smart-tab-worker-1.md)
+   - Recommended/Shortcuts/Automation tabs
+   - Leave Home/Arrive Home shortcuts
+   - Automation cards
 
-### From me-tab:
-- account-profile (tap profile section)
-- tapo-care-subscription (tap Tapo Care)
-- playback-library (tap Playback & Download)
-- camera-memory-management (tap Camera Memory)
-- firmware-update (tap Firmware Update)
-- notification-settings (tap Notifications)
-- device-sharing (tap Device Sharing)
+## Deliverables Created
+- `ui-exploration/user-actions.md` - Complete tap coordinate reference for automation
+- `ui-exploration/screens/*.md` - Detailed screen documentation files
 
-## Notes
-- device-settings screen causes ANR on emulator-5554 - may need faster emulator or real device
+## Discovered Screens (not yet documented)
+From home: device-options, notifications, add-device, family-picker, room-management, vacuums-tab
+From camera-live: device-settings (ANR), pan-tilt-controls, playback, fullscreen-live, multi-view, video-mode-picker, tapo-care, volume-control
+From cameras-tab: cloud-activity-tab, home-mode-settings, away-mode-settings
+From me-tab: account-profile, playback-library, camera-memory, firmware-update, notification-settings, device-sharing
+From smart-tab: smart-history, create-smart-action, shortcuts-tab, automation-tab, leave-home-setup, arrive-home-setup, tap-to-alarm-setup
+
+## Issues Encountered
+1. device-settings screen causes ANR on emulator-5554 - needs faster emulator
+2. screencap started returning empty files near end of session

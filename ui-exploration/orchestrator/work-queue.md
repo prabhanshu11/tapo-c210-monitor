@@ -9,7 +9,7 @@
 - [ ] cameras-tab (tap Cameras in bottom nav)
 - [ ] vacuums-tab (tap Vacuums in bottom nav)
 - [ ] smart-tab (tap Smart in bottom nav)
-- [ ] me-tab (tap Me in bottom nav)
+- [x] me-tab (worker-2 documented)
 
 ## Newly Discovered (by worker-1 from camera-live)
 - [ ] pan-tilt-controls (tap Pan & Tilt button)

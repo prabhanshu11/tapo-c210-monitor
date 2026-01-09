@@ -93,6 +93,27 @@ This file provides quick-reference tap coordinates and ADB commands for automati
 
 ---
 
+## Smart Tab (Automations) Screen
+
+**Screenshot:** `screenshots/tapo-smart-tab-automations-schedules-worker1.png`
+
+### Header Actions
+| Action | Tap Coordinates | ADB Command |
+|--------|-----------------|-------------|
+| View History | `248, 48` | `adb shell input tap 248 48` |
+| Add Smart Action | `296, 48` | `adb shell input tap 296 48` |
+
+### Tab & Card Actions
+| Action | Tap Coordinates | ADB Command |
+|--------|-----------------|-------------|
+| Shortcuts Tab | `204, 98` | `adb shell input tap 204 98` |
+| Automation Tab | `287, 98` | `adb shell input tap 287 98` |
+| Leave Home Shortcut | `98, 290` | `adb shell input tap 98 290` |
+| Arrive Home Shortcut | `256, 290` | `adb shell input tap 256 290` |
+| Tap to Alarm | `160, 533` | `adb shell input tap 160 533` |
+
+---
+
 ## Me Tab (Profile/Settings) Screen
 
 **Screenshot:** `screenshots/tapo-me-tab-profile-settings-account-worker1.png`

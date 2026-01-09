@@ -12,8 +12,8 @@
 <!-- Format: worker-N: COMMAND [args] -->
 
 ### Active Commands (workers should execute these):
-worker-1: CLAIM me-tab (tap [288,615] from home)
-worker-2: CONTINUE device-settings
+worker-1: CLAIM smart-tab (already working)
+worker-2: CLAIM vacuums-tab (tap [160,615] from home)
 
 ### Screenshot Protocol:
 When documenting a screen, workers MUST:
@@ -22,9 +22,9 @@ When documenting a screen, workers MUST:
 3. Resize if needed: `convert <file>.png -resize 'x1900>' <file>.png`
 
 ## Stats
-- Screens discovered: 17 (home: 10 + camera-live: 7)
-- Screens documented: 3 (home, camera-live by both workers)
-- Screens with consensus: 2 (home, camera-live)
+- Screens discovered: 25+ (expanding as workers explore)
+- Screens documented: 5 (home, camera-live, cameras-tab, me-tab, smart-tab in progress)
+- Screens with consensus: 3 (home, camera-live, me-tab)
 - Pending merges: 0
 - Issues: 1 (device-settings ANR on emulator-5554)
 
