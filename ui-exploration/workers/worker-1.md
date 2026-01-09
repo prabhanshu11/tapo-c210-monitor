@@ -9,7 +9,7 @@ screen: none
 started: -
 
 ## Session Summary
-Documented 5 screens with full UI element mapping and tap coordinates.
+Documented 6 screens with full UI element mapping and tap coordinates.
 
 ## Screenshots Captured (verbose names)
 - tapo-home-screen-device-grid-favorites-tab.png
@@ -43,6 +43,10 @@ Documented 5 screens with full UI element mapping and tap coordinates.
    - Recommended/Shortcuts/Automation tabs
    - Leave Home/Arrive Home shortcuts
    - Automation cards
+
+6. **vacuums-tab** (screens/vacuums-tab-worker-1.md)
+   - Empty state (no robot vacuums)
+   - Add Robot Vacuum buttons
 
 ## Deliverables Created
 - `ui-exploration/user-actions.md` - Complete tap coordinate reference for automation

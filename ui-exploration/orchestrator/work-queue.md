@@ -8,7 +8,7 @@
 - [ ] room-management (tap "More" in tabs)
 - [ ] cameras-tab (tap Cameras in bottom nav)
 - [ ] vacuums-tab (tap Vacuums in bottom nav)
-- [ ] smart-tab (tap Smart in bottom nav)
+- [x] smart-tab (worker-2 documented)
 - [x] me-tab (worker-2 documented)
 
 ## Newly Discovered (by worker-1 from camera-live)

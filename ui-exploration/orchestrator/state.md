@@ -22,9 +22,9 @@ When documenting a screen, workers MUST:
 3. Resize if needed: `convert <file>.png -resize 'x1900>' <file>.png`
 
 ## Stats
-- Screens discovered: 25+ (expanding as workers explore)
-- Screens documented: 5 (home, camera-live, cameras-tab, me-tab, smart-tab in progress)
-- Screens with consensus: 3 (home, camera-live, me-tab)
+- Screens discovered: 32+ (expanding as workers explore)
+- Screens documented: 5 (home, camera-live, cameras-tab, me-tab, smart-tab)
+- Screens with consensus: 4 (home, camera-live, me-tab, smart-tab)
 - Pending merges: 0
 - Issues: 1 (device-settings ANR on emulator-5554)
 

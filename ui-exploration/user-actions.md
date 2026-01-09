@@ -93,6 +93,16 @@ This file provides quick-reference tap coordinates and ADB commands for automati
 
 ---
 
+## Vacuums Tab Screen (Empty State)
+
+### Actions
+| Action | Tap Coordinates | ADB Command |
+|--------|-----------------|-------------|
+| Add Robot Vacuum (header) | `296, 48` | `adb shell input tap 296 48` |
+| Add Robot Vacuum (button) | `160, 550` | `adb shell input tap 160 550` |
+
+---
+
 ## Smart Tab (Automations) Screen
 
 **Screenshot:** `screenshots/tapo-smart-tab-automations-schedules-worker1.png`
