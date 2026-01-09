@@ -2,9 +2,16 @@
 
 ## Status: RUNNING
 
+## Worker Philosophy
+**BE PERPETUALLY EAGER TO WORK.**
+- Don't stop after documenting one screen
+- Immediately pick up the next undocumented screen
+- Cover the entire app space quickly
+- When one area is done, move to the next priority
+
 ## Active Workers
 - worker-1: ⏸️ IDLE - needs restart (emulator-5554 ✅)
-- worker-2: ⏸️ IDLE - needs restart (emulator-5556 ✅)
+- worker-2: 🟢 WORKING (emulator-5556 ✅)
 - worker-3: ⏸️ WAITING - needs emulator-5558 started
 
 ## Commands
@@ -26,9 +33,18 @@ Path: home -> me-tab [288,615] -> explore these:
 2. Camera Memory [160,410] - SD card status, storage management
 3. Back to camera-live -> test recording -> verify in playback
 
-**worker-3: DEEP EXPLORE - Device Settings (if emulator-5558 available)**
-Path: home -> camera-live -> device-settings [296,57]
-Document ALL settings categories, detection zones, notification config
+**worker-3: BREADTH EXPLORATION - Cover Undocumented Screens Fast**
+BE FAST. Document what you see and move on. Hit ALL these screens:
+1. device-settings (from camera-live [296,57]) - if no ANR
+2. notification-settings (from me-tab -> Notifications)
+3. firmware-update (from me-tab -> Firmware Update)
+4. device-sharing (from me-tab -> Device Sharing)
+5. account-profile (from me-tab -> profile card)
+6. smart-history (from smart-tab -> History button)
+7. create-smart-action (from smart-tab -> Add button)
+
+Quick doc format: Just list all UI elements, tap coordinates, discovered screens.
+Don't overthink - move fast!
 
 ### Exploration Priority (USER-REQUESTED):
 **DEEP DIVE - Camera Recording & Transfer Workflow:**
