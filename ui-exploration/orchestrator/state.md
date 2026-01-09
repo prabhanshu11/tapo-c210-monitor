@@ -12,7 +12,7 @@
 ## Active Workers
 - worker-1: ⏸️ IDLE - needs restart (emulator-5554 ✅)
 - worker-2: 🟢 WORKING (emulator-5556 ✅)
-- worker-3: ⏸️ WAITING - needs emulator-5558 started
+- worker-3: 🟢 READY (emulator-5558 ✅ connected!)
 
 ## Commands
 <!-- Write commands for workers here, they will poll this file -->
