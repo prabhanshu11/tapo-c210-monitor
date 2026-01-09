@@ -26,6 +26,11 @@ result: success - documented me-tab screen
 - camera-live (completed 2026-01-09T06:47:00Z)
 - me-tab (completed 2026-01-09T06:52:00Z)
 - smart-tab (completed 2026-01-09T06:54:00Z)
+- vacuums-tab (completed 2026-01-09T06:58:00Z)
+- notifications (completed 2026-01-09T06:59:00Z)
+- add-device-popup (completed 2026-01-09T07:00:00Z)
+- family-picker-popup (completed 2026-01-09T07:01:00Z)
+- room-management-popup (completed 2026-01-09T07:02:00Z)
 
 ## Action Maps Created
 - home-actions.md

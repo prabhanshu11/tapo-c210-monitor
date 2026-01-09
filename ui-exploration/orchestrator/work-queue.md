@@ -2,12 +2,12 @@
 
 ## Unclaimed Screens (from home)
 - [ ] device-options (long-press camera card)
-- [ ] notifications (tap notification bell)
-- [ ] add-device (tap + button)
-- [ ] family-picker (tap "My home" selector)
-- [ ] room-management (tap "More" in tabs)
+- [x] notifications (worker-2 documented)
+- [x] add-device (worker-2 documented)
+- [x] family-picker (worker-2 documented)
+- [x] room-management (worker-2 documented)
 - [ ] cameras-tab (tap Cameras in bottom nav)
-- [ ] vacuums-tab (tap Vacuums in bottom nav)
+- [x] vacuums-tab (worker-2 documented)
 - [x] smart-tab (worker-2 documented)
 - [x] me-tab (worker-2 documented)
 
