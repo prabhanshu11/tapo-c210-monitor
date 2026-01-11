@@ -1,177 +1,303 @@
 # TAPO C210 Monitor
 
-Intelligent monitoring system for TP-Link TAPO C210 WiFi camera with dual control methods:
-1. **Direct API** - Using pytapo library for RTSP streaming and camera control
-2. **Android Automation** - Control camera via Tapo app using ADB + screen capture + OCR
-
-## Features
-
-- Live RTSP video streaming (HD/SD)
-- PTZ (Pan-Tilt-Zoom) camera control
-- SD card recording synchronization
-- Privacy mode, LED, motion detection control
-- Android app automation with simulated touch/keyboard
-- Screen capture and OCR for intelligent UI interaction
-- File transfer from Android sandbox
-- GUI control panel with real-time preview
-
-## Prerequisites
-
-### System Packages (Arch Linux)
-
-```bash
-# ADB tools for Android control
-sudo pacman -S android-tools
-
-# Tesseract for OCR (optional)
-sudo pacman -S tesseract tesseract-data-eng
-
-# FFmpeg (usually already installed)
-sudo pacman -S ffmpeg
+```
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║   ████████╗ █████╗ ██████╗  ██████╗      ██████╗██████╗  ██╗ ██████╗          ║
+║   ╚══██╔══╝██╔══██╗██╔══██╗██╔═══██╗    ██╔════╝╚════██╗███║██╔═████╗         ║
+║      ██║   ███████║██████╔╝██║   ██║    ██║      █████╔╝╚██║██║██╔██║         ║
+║      ██║   ██╔══██║██╔═══╝ ██║   ██║    ██║     ██╔═══╝  ██║████╔╝██║         ║
+║      ██║   ██║  ██║██║     ╚██████╔╝    ╚██████╗███████╗ ██║╚██████╔╝         ║
+║      ╚═╝   ╚═╝  ╚═╝╚═╝      ╚═════╝      ╚═════╝╚══════╝ ╚═╝ ╚═════╝          ║
+║                                                                               ║
+║                    🎥 Intelligent Camera Monitor 🎥                            ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
 ```
 
-### Camera Setup
+AI-powered monitoring system for TP-Link TAPO C210 WiFi camera with **direct RTSP streaming** and **Android automation** for PAN/TILT control.
 
-1. Install Tapo app on your phone
-2. Set up camera and connect to WiFi
-3. Create a **Camera Account** (Settings > Advanced Settings > Camera Account)
-4. Note the camera IP address
+## ✅ Status: RTSP Working!
 
-## Installation
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      RTSP STREAMING ACTIVE                       │
+│                                                                 │
+│   Camera ────────► RTSP ────────► Your Computer                 │
+│   192.168.29.183   Port 554      ffmpeg/VLC/Python              │
+│                                                                 │
+│   Resolution: 2304x1296 HD │ Codec: H.264 │ FPS: 25             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 🎯 Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                   Pan Control Experiment                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   [RTSP Stream]                [Android Emulator]               │
+│   Direct Video                 PAN/TILT Control                 │
+│        │                              │                         │
+│        ▼                              ▼                         │
+│   ┌─────────┐                  ┌─────────────┐                  │
+│   │ ffmpeg  │                  │  Tapo App   │                  │
+│   │ frame   │                  │  ADB taps   │                  │
+│   │ capture │                  │             │                  │
+│   └────┬────┘                  └──────┬──────┘                  │
+│        │                              │                         │
+│        └──────────────┬───────────────┘                         │
+│                       ▼                                         │
+│        ┌─────────────────────────────────┐                      │
+│        │    Visual Change Detection       │                      │
+│        │  (Compare frames before/after)   │                      │
+│        └─────────────────────────────────┘                      │
+│                       │                                         │
+│                       ▼                                         │
+│        ┌─────────────────────────────────┐                      │
+│        │      Claude Agent SDK            │                      │
+│        │   (Interpret & Take Actions)     │                      │
+│        └─────────────────────────────────┘                      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## 📸 Screenshots
+
+| Home Screen | PTZ Controls |
+|-------------|--------------|
+| ![Home](ui-exploration/screenshots/camera-offline-home-screen.png) | ![PTZ](ui-exploration/screenshots/camera-live-ptz-panel-open.png) |
+
+## 🚀 Quick Start
+
+### 1. Mobile App Setup (Required First!)
+
+Open the **Tapo app** on your phone and follow these steps:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    📱 MOBILE APP SETUP                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  STEP 1: Enable Third-Party Compatibility                       │
+│  ─────────────────────────────────────────                      │
+│  📍 Me tab → Settings (gear icon) → Third-Party Compatibility   │
+│  ✅ Toggle ON                                                   │
+│  ⚠️  Accept the privacy warning dialog                          │
+│                                                                 │
+│  STEP 2: Create Camera Account (RTSP credentials)               │
+│  ─────────────────────────────────────────────────              │
+│  📍 Home → Tap camera → Settings (gear) → Advanced Settings     │
+│     → Camera Account                                            │
+│  ✅ Create username and password                                │
+│  💡 This is DIFFERENT from your TP-Link account!                │
+│                                                                 │
+│  STEP 3: Reboot Camera                                          │
+│  ─────────────────────                                          │
+│  🔌 Physically unplug and replug the camera                     │
+│  ⏱️  Wait 30 seconds for it to reconnect                        │
+│  ✅ Ports will now be open (554, 2020, 443, 8800)               │
+│                                                                 │
+│  STEP 4: Note Your Camera IP                                    │
+│  ──────────────────────────                                     │
+│  📍 Camera Settings → Device Info → IP Address                  │
+│  💡 Or run: ./scripts/discover_camera.sh                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Visual Guide:**
+
+| Step | Screenshot |
+|------|------------|
+| Third-Party Compatibility | ![Third-Party](ui-exploration/screenshots/2026-01-11-discoveries/01-third-party-compatibility-off.png) |
+| Camera Account Warning | ![Warning](ui-exploration/screenshots/2026-01-11-discoveries/07-camera-account-setup-warning.jpg) |
+
+### 2. Discover Camera IP
 
 ```bash
-cd ~/Programs/tapo-c210-monitor
+./scripts/discover_camera.sh
+# Output: 192.168.29.183
+```
+
+### 3. Test RTSP Stream
+
+```bash
+# Capture a frame
+ffmpeg -rtsp_transport tcp \
+  -i "rtsp://prabhanshu:iamapantar@192.168.29.183/stream1" \
+  -frames:v 1 -update 1 /tmp/frame.jpg
+
+# View with VLC
+vlc "rtsp://prabhanshu:iamapantar@192.168.29.183/stream1"
+```
+
+## 📡 Network Ports
+
+| Port | Protocol | Purpose |
+|------|----------|---------|
+| 443 | HTTPS | Camera control API |
+| 554 | RTSP | Video streaming |
+| 2020 | ONVIF | Motion detection |
+| 8800 | Proprietary | TP-Link binary protocol |
+
+## 🔧 Features
+
+### Working ✅
+- **RTSP video streaming** - Direct HD/SD access
+- **Camera discovery** - Auto-find camera on network
+- **PAN/TILT controls** - Via Android emulator
+- **Photo/video capture** - Via emulator
+- **UI automation** - Full Tapo app control
+
+### Emulator Quirks ⚠️
+- Video feed blacks out (MQTT issue) - Use RTSP instead
+- ANR on live view - Use Me tab for playback access
+- PAG library causes main thread blocking
+
+## 🛠️ Installation
+
+```bash
+# Clone
+git clone https://github.com/prabhanshu11/tapo-c210-monitor.git
+cd tapo-c210-monitor
+
+# Install dependencies
 uv sync
-```
 
-## Configuration
-
-Create a `.env` file:
-
-```bash
+# Configure
 cp .env.example .env
 # Edit with your camera details
 ```
 
-Required variables:
-- `TAPO_HOST` - Camera IP address
-- `TAPO_USERNAME` - Camera account username
-- `TAPO_PASSWORD` - Camera account password
-
-Optional:
-- `TPLINK_CLOUD_PASSWORD` - TP-Link cloud password (fallback auth)
-- `RECORDINGS_OUTPUT_DIR` - Directory for synced recordings
-
-## Usage
-
-### GUI Control Panel
+## 📋 Configuration
 
 ```bash
-uv run python main.py gui
+# .env file
+TAPO_HOST=192.168.29.183
+TAPO_USERNAME=prabhanshu
+TAPO_PASSWORD=iamapantar
 ```
 
-### Test Connections
+## 🌐 Web UI Setup
+
+Launch the configuration web interface:
 
 ```bash
-# Test camera API connection
+uv run python -m tapo_c210_monitor.webui.app
+# Open http://localhost:8080
+```
+
+The web UI provides:
+- Step-by-step mobile app setup checklist
+- Camera credential input
+- Auto-discovery of camera on network
+- RTSP connection testing
+- Configuration file generation
+
+## 🎮 Usage
+
+### Python Discovery
+
+```python
+from tapo_c210_monitor.discovery import discover_camera, get_rtsp_url
+
+# Find camera
+camera_ip = discover_camera()
+print(f"Found: {camera_ip}")
+
+# Get RTSP URL
+url = get_rtsp_url(camera_ip)
+print(f"RTSP: {url}")
+```
+
+### CLI Commands
+
+```bash
+# Test camera connection
 uv run python main.py test-camera
 
-# Test Android ADB connection
-uv run python main.py test-android
-```
-
-### Sync Recordings
-
-```bash
-# Sync today's recordings
-uv run python main.py sync
-
-# Sync last 7 days
-uv run python main.py sync --days 7 --output ./recordings
-```
-
-### Take Snapshot
-
-```bash
+# Take snapshot
 uv run python main.py snapshot --output capture.jpg
+
+# Sync recordings
+uv run python main.py sync --days 7
 ```
 
-### Watch Android for New Files
+### Android Emulator Control
 
 ```bash
-uv run python main.py watch-android --output ./synced
+# Start emulator
+~/Android/Sdk/emulator/emulator -avd tapo_playstore -gpu host
+
+# Launch Tapo app
+adb shell am start -n com.tplink.iot/.view.welcome.StartupActivity
+
+# Navigate to camera (dp coordinates)
+adb shell input tap 85 220
+
+# PAN left
+adb shell input tap 108 592
 ```
 
-### Show System Info
-
-```bash
-uv run python main.py info
-```
-
-## Android Setup
-
-To use Android automation features:
-
-1. Enable Developer Options on Android device
-2. Enable USB Debugging
-3. Connect via USB or set up ADB over WiFi:
-   ```bash
-   adb tcpip 5555
-   adb connect <phone-ip>:5555
-   ```
-4. Install Tapo app on the Android device
-
-## RTSP Stream URLs
-
-Once configured, the camera provides:
-- **HD Stream**: `rtsp://<user>:<pass>@<ip>:554/stream1`
-- **SD Stream**: `rtsp://<user>:<pass>@<ip>:554/stream2`
-- **ONVIF**: `http://<ip>:2020/onvif/device_service`
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 tapo-c210-monitor/
-├── main.py                 # CLI entry point
 ├── src/tapo_c210_monitor/
-│   ├── camera.py           # Direct camera API (pytapo)
-│   ├── stream.py           # RTSP stream capture
-│   ├── sync.py             # Recording synchronization
+│   ├── discovery.py          # Camera IP discovery
 │   ├── android/
-│   │   ├── controller.py   # ADB device control
-│   │   ├── screen.py       # Screen capture + OCR
-│   │   ├── ui.py           # UI automation
-│   │   └── file_transfer.py # Android file sync
-│   └── gui/
-│       └── control_panel.py # Tkinter GUI
-├── .env.example            # Configuration template
-├── pyproject.toml          # Project dependencies
+│   │   ├── controller.py     # ADB wrapper
+│   │   ├── camera_controls.py # PTZ coordinates
+│   │   └── tapo_automator.py # UI automation
+│   └── vision/
+│       └── llm_vision.py     # OpenRouter vision API
+├── scripts/
+│   └── discover_camera.sh    # Network scanner
+├── docs/
+│   └── TAPO_APP_INTERNALS.md # How Tapo app works
+├── ui-exploration/
+│   ├── screens/              # UI documentation
+│   ├── screenshots/          # Reference images
+│   └── NAVIGATION_QUICK_REF.md
 └── README.md
 ```
 
-## Troubleshooting
+## 📖 Documentation
 
-### Camera Connection Fails
+- **[TAPO_APP_INTERNALS.md](docs/TAPO_APP_INTERNALS.md)** - How the Tapo app works internally
+- **[CONVERSATION_HISTORY.md](CONVERSATION_HISTORY.md)** - Project development timeline
+- **[NAVIGATION_QUICK_REF.md](ui-exploration/NAVIGATION_QUICK_REF.md)** - UI tap coordinates
+- **[SESSION_2026-01-11.md](ui-exploration/SESSION_2026-01-11.md)** - Breakthrough session notes
 
-1. Verify camera IP is correct and reachable (`ping <ip>`)
-2. Check camera account credentials in Tapo app
-3. Try `admin` as username with TP-Link cloud password
-4. Enable "Third-Party Compatibility" in Tapo app (Settings > Tapo Lab)
+## 🔬 Key Discoveries
 
-### Android Connection Fails
+1. **MQTT is the video bottleneck** - App uses MQTT via cloud, fails on emulator
+2. **RTSP bypasses this** - Direct local access works perfectly
+3. **Three steps for RTSP** - Toggle + Account + Reboot (all required!)
+4. **PAG causes ANR** - Tencent animation library blocks main thread
+5. **Two auth systems** - Cloud (TP-Link) vs Local (Camera Account)
 
-1. Run `adb devices` to check connection
-2. Accept USB debugging prompt on phone
-3. For wireless: `adb connect <ip>:5555`
+## 🎯 Roadmap
 
-### RTSP Stream Not Working
+- [x] RTSP streaming
+- [x] Camera discovery
+- [x] PAN/TILT control via emulator
+- [ ] Visual change detection
+- [ ] Claude Agent SDK integration
+- [ ] Gas knob monitoring experiment
+- [ ] Multi-camera support
 
-1. Test with VLC: `vlc rtsp://<user>:<pass>@<ip>:554/stream1`
-2. Check camera firmware is up to date
-3. Some models require enabling RTSP in Tapo app settings
-
-## References
+## 📚 References
 
 - [pytapo](https://github.com/JurajNyiri/pytapo) - Python library for Tapo cameras
-- [python-kasa](https://github.com/python-kasa/python-kasa) - TP-Link smart device library
-- [TP-Link RTSP/ONVIF FAQ](https://www.tp-link.com/us/support/faq/2680/)
+- [HomeAssistant-Tapo-Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control) - HA integration
+- [TP-Link RTSP FAQ](https://www.tp-link.com/us/support/faq/2680/)
+
+---
+
+<p align="center">
+  <i>Built for the intelligent home automation vision</i><br>
+  <code>omarchy-voice-typing</code> + <code>tapo-c210-monitor</code> + <code>Claude Agent SDK</code>
+</p>

@@ -1,42 +1,23 @@
 # Known Issues - TAPO C210 Monitor Project
 
-## HIGH PRIORITY: Android Emulator Instability
+## ~~RESOLVED: Android Emulator Instability~~
 
-### Problem
-The Android emulator (`tapo_playstore` AVD) crashes frequently during operation, typically after:
-- Taking screenshots
-- Running UI automation commands
-- Network operations (like Aurora Store anonymous login)
+**Status: FIXED (2026-01-09)**
 
-### Environment
-- Emulator: Android 33 (google_apis_playstore, x86_64)
-- GPU: swiftshader_indirect
-- Host: Linux 6.17.9-arch1-1
-- SDK Path: ~/Android/Sdk
+### Solution Applied
+- Enabled **KVM hardware acceleration** with RTX 2060 SUPER GPU
+- Switched from `swiftshader_indirect` to hardware GPU rendering
+- System image: `android-34;google_apis_playstore;x86_64`
 
-### Symptoms
-- ADB connection drops ("no devices/emulators found")
-- Emulator process terminates without clear error
-- qemu process disappears
+### Current Working Setup
+- AVD Name: `tapo_playstore`
+- GPU: Hardware (KVM + RTX 2060 SUPER)
+- ARM Translation: `libndk_translation.so` for ARM APKs
+- Stability: Good for extended automation sessions
 
-### Attempted Mitigations (unsuccessful)
-- `-no-snapshot` flag
-- `-no-boot-anim` flag
-- `-no-window` (headless mode)
-- `-memory 2048`
-- `-gpu swiftshader_indirect`
-- `-no-audio`
-
-### Root Cause (suspected)
-- Possible memory/resource issues with swiftshader on this system
-- May need hardware GPU acceleration (KVM/HAXM)
-- Could be filesystem-related (noted: "File System is not ext4, disable QuickbootFileBacked feature")
-
-### Workarounds to Try
-1. Use physical Android device with USB debugging
-2. Use cloud-based Android (Firebase Test Lab, AWS Device Farm, Genymotion Cloud)
-3. Try older Android API level (less resource intensive)
-4. Enable KVM acceleration if available
+### Original Problem (for reference)
+The emulator previously crashed frequently with swiftshader_indirect software rendering.
+Root cause was lack of hardware acceleration.
 
 ---
 

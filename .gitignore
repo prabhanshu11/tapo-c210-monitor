@@ -17,3 +17,5 @@ apks/tapo-apk-*/
 apks/*.tar.gz
 screenshots/*.png
 !screenshots/login-flow/
+apks/tapo_extracted/*.apk
+*.apk
