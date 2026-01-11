@@ -104,7 +104,8 @@ func (rb *RingBuffer) Stop() {
 
 // runFFmpeg starts ffmpeg to record RTSP stream into segments
 func (rb *RingBuffer) runFFmpeg() {
-	segmentPattern := filepath.Join(rb.config.BufferDir, "segment_%Y%m%d_%H%M%S.mp4")
+	// Use sequential numbering - will be renamed to Unix timestamps by scanner
+	segmentPattern := filepath.Join(rb.config.BufferDir, "segment_%05d.mp4")
 
 	args := []string{
 		"-rtsp_transport", "tcp",
@@ -114,7 +115,6 @@ func (rb *RingBuffer) runFFmpeg() {
 		"-f", "segment",
 		"-segment_time", strconv.Itoa(rb.config.SegmentSeconds),
 		"-segment_format", "mp4",
-		"-strftime", "1",
 		"-reset_timestamps", "1",
 	}
 
@@ -130,7 +130,6 @@ func (rb *RingBuffer) runFFmpeg() {
 			"-f", "segment",
 			"-segment_time", strconv.Itoa(rb.config.SegmentSeconds),
 			"-segment_format", "mp4",
-			"-strftime", "1",
 			"-reset_timestamps", "1",
 		}
 	}
@@ -196,18 +195,39 @@ func (rb *RingBuffer) updateSegments() {
 			if err != nil {
 				continue
 			}
-			// Parse timestamp from filename: segment_20260111_143052.mp4
+
+			// Extract timestamp from filename or use ModTime
 			name := filepath.Base(f)
 			name = strings.TrimPrefix(name, "segment_")
 			name = strings.TrimSuffix(name, ".mp4")
-			t, err := time.Parse("20060102_150405", name)
-			if err != nil {
-				t = info.ModTime()
+
+			var unixTimestamp int64
+			var segmentPath string
+
+			// Try to parse as Unix timestamp
+			if ts, err := strconv.ParseInt(name, 10, 64); err == nil && ts > 1000000000 {
+				// Valid Unix timestamp (after year 2001)
+				unixTimestamp = ts
+				segmentPath = f
+			} else {
+				// Sequential number or invalid - use ModTime and rename
+				unixTimestamp = info.ModTime().Unix()
+				newName := fmt.Sprintf("segment_%d.mp4", unixTimestamp)
+				newPath := filepath.Join(rb.config.BufferDir, newName)
+
+				// Rename file to use Unix timestamp
+				if err := os.Rename(f, newPath); err != nil {
+					log.Printf("Warning: failed to rename %s to %s: %v", f, newName, err)
+					segmentPath = f // Keep old path
+				} else {
+					segmentPath = newPath
+					log.Printf("Renamed segment: %s -> %s (Unix: %d)", filepath.Base(f), newName, unixTimestamp)
+				}
 			}
 
 			rb.segments = append(rb.segments, Segment{
-				Path:      f,
-				StartTime: t,
+				Path:      segmentPath,
+				StartTime: time.Unix(unixTimestamp, 0),
 				Size:      info.Size(),
 			})
 		}
@@ -399,23 +419,28 @@ func (rb *RingBuffer) GetFrames(secondsAgo []float64, outputDir string) ([]strin
 
 	var framePaths []string
 	now := time.Now()
+	nowUnix := now.Unix()
 
-	log.Printf("GetFrames: now=%s, segments=%d, oldest=%s, newest=%s",
-		now.Format("15:04:05"),
+	log.Printf("GetFrames: now=%d (%s), segments=%d, oldest=%d (%s), newest=%d (%s)",
+		nowUnix, now.Local().Format("15:04:05"),
 		len(rb.segments),
-		rb.segments[0].StartTime.Format("15:04:05"),
-		rb.segments[len(rb.segments)-1].StartTime.Format("15:04:05"))
+		rb.segments[0].StartTime.Unix(), rb.segments[0].StartTime.Local().Format("15:04:05"),
+		rb.segments[len(rb.segments)-1].StartTime.Unix(), rb.segments[len(rb.segments)-1].StartTime.Local().Format("15:04:05"))
 
 	// Debug: print all segment ranges
 	log.Printf("  All segments:")
 	for _, s := range rb.segments {
 		segEnd := s.StartTime.Add(time.Duration(rb.config.SegmentSeconds) * time.Second)
-		log.Printf("    %s: %s - %s", filepath.Base(s.Path), s.StartTime.Format("15:04:05"), segEnd.Format("15:04:05"))
+		log.Printf("    %s: Unix %d-%d (%s - %s)",
+			filepath.Base(s.Path),
+			s.StartTime.Unix(), segEnd.Unix(),
+			s.StartTime.Local().Format("15:04:05"), segEnd.Local().Format("15:04:05"))
 	}
 
 	for i, secAgo := range secondsAgo {
 		targetTime := now.Add(-time.Duration(secAgo * float64(time.Second)))
-		log.Printf("  Looking for frame at %.1fs ago (target: %s)", secAgo, targetTime.Format("15:04:05"))
+		targetUnix := targetTime.Unix()
+		log.Printf("  Looking for frame at %.1fs ago (Unix %d, local %s)", secAgo, targetUnix, targetTime.Local().Format("15:04:05"))
 
 		// Find segment containing this time
 		var targetSegment *Segment
@@ -424,16 +449,17 @@ func (rb *RingBuffer) GetFrames(secondsAgo []float64, outputDir string) ([]strin
 			segEnd := s.StartTime.Add(time.Duration(rb.config.SegmentSeconds) * time.Second)
 			if !targetTime.Before(s.StartTime) && targetTime.Before(segEnd) {
 				targetSegment = s
-				log.Printf("    Found segment: %s (range: %s - %s)",
+				log.Printf("    Found segment: %s (Unix %d-%d, local %s - %s)",
 					filepath.Base(s.Path),
-					s.StartTime.Format("15:04:05"),
-					segEnd.Format("15:04:05"))
+					s.StartTime.Unix(), segEnd.Unix(),
+					s.StartTime.Local().Format("15:04:05"),
+					segEnd.Local().Format("15:04:05"))
 				break
 			}
 		}
 
 		if targetSegment == nil {
-			log.Printf("    No segment found for target time %s", targetTime.Format("15:04:05"))
+			log.Printf("    No segment found for target Unix %d (local %s)", targetUnix, targetTime.Local().Format("15:04:05"))
 			continue
 		}
 
@@ -449,8 +475,9 @@ func (rb *RingBuffer) GetFrames(secondsAgo []float64, outputDir string) ([]strin
 			"-q:v", "2",
 			outputPath)
 
-		if err := cmd.Run(); err != nil {
-			log.Printf("Failed to extract frame at %.1fs ago: %v", secAgo, err)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("Failed to extract frame at %.1fs ago: %v\nFFmpeg output:\n%s", secAgo, err, string(output))
 			continue
 		}
 

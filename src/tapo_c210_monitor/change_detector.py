@@ -113,14 +113,14 @@ class LLMVisionAnalyzer:
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "gemini-2.0-flash-thinking-exp",
+        model: str = "google/gemini-3-flash-preview",
     ):
         # Try to get API key from environment
-        self.api_key = api_key or os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+        self.api_key = api_key or os.getenv("OPENROUTER_API_KEY")
         self.model = model
 
         if not self.api_key:
-            raise ValueError("GEMINI_API_KEY or GOOGLE_API_KEY environment variable required")
+            raise ValueError("OPENROUTER_API_KEY environment variable required")
 
     def _encode_image(self, path: str) -> str:
         """Encode image to base64."""
@@ -138,37 +138,50 @@ class LLMVisionAnalyzer:
         }.get(ext, "image/jpeg")
 
     def analyze_change(self, event: ChangeEvent) -> str:
-        """Analyze a change event using Gemini."""
+        """Analyze a change event using OpenRouter."""
 
-        # Build the prompt with images
-        parts = []
+        # Build OpenAI-format content array
+        content = []
 
         # Add before frames
-        parts.append({"text": "BEFORE the change (frames from a few seconds earlier):\n"})
+        content.append({
+            "type": "text",
+            "text": "BEFORE the change (frames from a few seconds earlier):"
+        })
         for i, frame_path in enumerate(event.frames_before):
             if os.path.exists(frame_path):
-                parts.append({
-                    "inline_data": {
-                        "mime_type": self._get_mime_type(frame_path),
-                        "data": self._encode_image(frame_path),
+                content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:{self._get_mime_type(frame_path)};base64,{self._encode_image(frame_path)}"
                     }
                 })
-                parts.append({"text": f"Before frame {i+1}\n"})
+                content.append({
+                    "type": "text",
+                    "text": f"Before frame {i+1}"
+                })
 
         # Add after frames
-        parts.append({"text": "\nAFTER the change (frames from the moment of change and after):\n"})
+        content.append({
+            "type": "text",
+            "text": "\nAFTER the change (frames from the moment of change and after):"
+        })
         for i, frame_path in enumerate(event.frames_after):
             if os.path.exists(frame_path):
-                parts.append({
-                    "inline_data": {
-                        "mime_type": self._get_mime_type(frame_path),
-                        "data": self._encode_image(frame_path),
+                content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:{self._get_mime_type(frame_path)};base64,{self._encode_image(frame_path)}"
                     }
                 })
-                parts.append({"text": f"After frame {i+1}\n"})
+                content.append({
+                    "type": "text",
+                    "text": f"After frame {i+1}"
+                })
 
         # Add the question
-        parts.append({
+        content.append({
+            "type": "text",
             "text": """
 Looking at the BEFORE and AFTER frames from this security camera:
 
@@ -183,20 +196,27 @@ Be concise but specific.
 """
         })
 
-        # Call Gemini API
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{self.model}:generateContent"
+        # Call OpenRouter API
+        url = "https://openrouter.ai/api/v1/chat/completions"
 
         payload = {
-            "contents": [{"parts": parts}],
-            "generationConfig": {
-                "temperature": 0.4,
-                "maxOutputTokens": 500,
-            }
+            "model": self.model,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": content
+                }
+            ],
+            "temperature": 0.4,
+            "max_tokens": 500,
         }
 
         resp = httpx.post(
             url,
-            params={"key": self.api_key},
+            headers={
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+            },
             json=payload,
             timeout=60,
         )
@@ -207,7 +227,7 @@ Be concise but specific.
         result = resp.json()
 
         try:
-            return result["candidates"][0]["content"]["parts"][0]["text"]
+            return result["choices"][0]["message"]["content"]
         except (KeyError, IndexError) as e:
             return f"Failed to parse response: {e}\n{json.dumps(result, indent=2)}"
 

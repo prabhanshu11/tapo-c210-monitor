@@ -77,6 +77,104 @@ with open(src, 'w') as f:
 - `src/tapo_c210_monitor/android/intelligent_screen.py` - LLM-based UI detection
 - `src/tapo_c210_monitor/vision/llm_vision.py` - OpenRouter vision API
 
+## Verification Philosophy
+
+**CRITICAL: Always web search to verify world artifacts instead of relying on intuition**
+
+When dealing with external systems, APIs, or version-specific information:
+1. **DO NOT guess** - Don't try multiple variations hoping one works
+2. **WEB SEARCH FIRST** - Use WebSearch to find authoritative documentation
+3. **Verify current state** - APIs change, model names evolve, versions matter
+
+### Examples
+**Bad** (guessing):
+```python
+# Trying multiple model names hoping one works
+"google/gemini-2.0-flash-thinking-exp:free"  # Error: invalid
+"google/gemini-flash-1.5"                     # Error: not found
+"google/gemini-flash-1.5-8b"                  # Error: not found
+"google/gemini-pro-vision"                    # Error: invalid
+```
+
+**Good** (web search):
+```
+WebSearch: "OpenRouter gemini 3 model ID 2026"
+Result: google/gemini-3-flash-preview  # Works first time!
+```
+
+**When to web search**:
+- API endpoints and model IDs
+- Library versions and compatibility
+- External service capabilities
+- Current tool/package names
+- Hardware/firmware specifications
+
+**When intuition is OK**:
+- Internal code patterns (you can see the codebase)
+- Standard programming practices
+- Math and logic
+
+## Time Handling Architecture
+
+**CRITICAL PRINCIPLE: Use Unix timestamps internally, local time only at UI level**
+
+### Rules
+1. **All internal timestamps**: Unix time (seconds since epoch, UTC)
+   - Database fields
+   - API payloads
+   - Log files
+   - Inter-process communication
+   - File naming (use Unix timestamp, not strftime)
+
+2. **Local time conversion**: ONLY at UI/display layer
+   - User-facing displays
+   - Human-readable logs (alongside Unix timestamp)
+   - Command-line output for debugging
+
+3. **Why**: Eliminates timezone bugs, makes systems portable, simplifies time arithmetic
+
+### Examples
+
+**Good** (Unix timestamps):
+```go
+// Segment filename
+segmentPath := fmt.Sprintf("segment_%d.mp4", time.Now().Unix())
+
+// API payload
+{"timestamp": 1736611200, "event": "motion_detected"}
+
+// Time comparison
+if eventTime > startTime && eventTime < endTime { ... }
+```
+
+**Bad** (local time strings):
+```go
+// DON'T DO THIS
+segmentPath := time.Now().Format("segment_20060102_150405.mp4")
+{"timestamp": "2026-01-11 14:30:00 EST", "event": "motion_detected"}
+```
+
+**Display layer** (convert to local for humans):
+```python
+# Python display
+import time
+unix_ts = 1736611200
+local_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(unix_ts))
+print(f"Event at {local_str} (Unix: {unix_ts})")
+```
+
+```go
+// Go display
+ts := time.Unix(unixTimestamp, 0)
+log.Printf("Event at %s (Unix: %d)", ts.Local().Format("15:04:05"), unixTimestamp)
+```
+
+### Ring Buffer Implementation
+- Segment files: `segment_1736611200.mp4` (Unix timestamp)
+- Segment metadata: Store Unix timestamp for start time
+- Frame lookup: Compare Unix timestamps directly (no timezone conversion)
+- API responses: Return Unix timestamps, let client format for display
+
 ## Environment Variables
 ```
 OPENROUTER_API_KEY=sk-or-...  # For LLM vision analysis

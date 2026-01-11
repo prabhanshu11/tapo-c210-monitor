@@ -20,3 +20,4 @@ screenshots/*.png
 apks/tapo_extracted/*.apk
 *.apk
 .env
+ringbuffer/ringbuffer
