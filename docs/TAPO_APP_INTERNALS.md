@@ -97,7 +97,7 @@ PAN/TILT and other controls use **HTTP/REST** (not MQTT):
 App ──► TP-Link Cloud (HTTPS) ──► Camera
 ```
 
-This is why PAN/TILT works on emulator even when video doesn't.
+**Note**: The app's HTTP control path requires active video connection context - controls don't work independently on emulator.
 
 ## Network Ports (When Third-Party Enabled)
 
@@ -181,7 +181,9 @@ I/Choreographer: Skipped 44 frames! The application may be doing too much work o
 |------|--------|
 | Home → Me → Playback & Download | Works |
 | Home → Me → Camera Memory | Works |
-| Home → Camera Card → PAN/TILT | Works (video blacks out, controls work) |
+| Home → Me → Settings | Works |
+
+**Note**: Live camera view causes ANR, making app-based PTZ control unreliable on emulator.
 
 ## Coordinate System
 
@@ -213,18 +215,55 @@ adb shell input tap 360 1206
 - RTSP with H.264/H.265
 - Basic auth with Camera Account credentials
 
+## Camera Connectivity Issue (2026-01-11) - NEEDS INVESTIGATION
+
+**Observed**: Camera ports (443, 554, 2020, 8800) sometimes stop responding to scans.
+
+**Possible causes to investigate**:
+- Network connectivity issue (WiFi dropout)
+- Router/firewall behavior
+- DHCP lease changes when IP changed from dynamic to static
+- Unknown camera behavior (Tapo cameras typically stay online continuously)
+
+**What seemed to help**:
+- Opening camera view in phone app
+- Setting static IP in camera settings
+
+**Note**: User reports Tapo cameras normally don't sleep - this behavior is unusual and needs investigation.
+
+**TODO**:
+- Check router logs during connectivity loss
+- Review SD card diagnostic logs for clues
+- Test if RTSP keepalive prevents the issue
+
+## Diagnostic Logging (SD Card)
+
+Camera can save diagnostic logs to MicroSD card:
+
+**Location**: Camera Settings → Diagnostics App
+
+**Purpose**: Debug information for potential analysis/hacking to improve:
+- Custom firmware possibilities
+- Direct API access without cloud
+- Sleep mode control
+- Commercial integration opportunities
+
+**Status**: Enabled, logs accumulating on SD card.
+
 ## Key Findings Summary
 
 1. **MQTT is the bottleneck** - Video streaming relies on MQTT which fails on emulator
 2. **RTSP bypasses the problem** - Direct local access avoids cloud relay
 3. **Three steps for RTSP** - Toggle + Account + Reboot (all required)
 4. **PAG causes ANR** - Animation library blocks main thread
-5. **Controls work separately** - HTTP/REST path is independent of video
-6. **Two auth systems** - Cloud vs Local credentials are different
+5. **Two auth systems** - Cloud vs Local credentials are different
+6. **ONVIF is the solution** - Direct PTZ control via port 2020 works reliably (see `ptz_mapper/README.md`)
+7. **App-based PTZ fails on emulator** - ANR blocks the live view screen where PTZ controls live
 
 ## References
 
 - Session log: `ui-exploration/SESSION_2026-01-11.md`
 - Third-party setup: `ui-exploration/screens/third-party-compatibility.md`
 - Navigation coords: `ui-exploration/NAVIGATION_QUICK_REF.md`
+- **PTZ Control**: `src/tapo_c210_monitor/ptz_mapper/README.md` - Working ONVIF-based solution
 - Home Assistant integration: [HomeAssistant-Tapo-Control](https://github.com/JurajNyiri/HomeAssistant-Tapo-Control)

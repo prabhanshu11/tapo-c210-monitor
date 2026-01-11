@@ -2,14 +2,17 @@
 Camera Discovery Module
 
 Discovers Tapo camera IP on local network by scanning for RTSP port.
+Includes wake mechanism for sleeping cameras.
 """
 
 import socket
+import subprocess
+import time
 import concurrent.futures
 from typing import Optional
 
 
-def check_port(ip: str, port: int = 554, timeout: float = 0.5) -> bool:
+def check_port(ip: str, port: int = 554, timeout: float = 2.0) -> bool:
     """Check if a port is open on the given IP."""
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout)
@@ -25,7 +28,7 @@ def check_port(ip: str, port: int = 554, timeout: float = 0.5) -> bool:
 def discover_camera(
     subnet: str = "192.168.29",
     port: int = 554,
-    timeout: float = 0.5,
+    timeout: float = 2.0,
     max_workers: int = 50
 ) -> Optional[str]:
     """

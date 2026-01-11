@@ -19,3 +19,4 @@ screenshots/*.png
 !screenshots/login-flow/
 apks/tapo_extracted/*.apk
 *.apk
+.env
