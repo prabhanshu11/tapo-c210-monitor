@@ -6,6 +6,14 @@
 2. **Read project CLAUDE.md**: Project-specific technical guidelines
 3. **Read progress_actual.md**: Current state, decisions, constraints
 4. **Check other projects**: Look at sibling projects in ~/Programs for patterns
+5. **Check cross-machine state** (for shared repos):
+   ```bash
+   # Before working on repos shared across machines
+   ssh desktop "cd ~/Programs/REPO && git status --short"
+   ssh laptop "cd ~/Programs/REPO && git status --short"
+   ```
+   - Uncommitted changes on another machine = previous agent's work-in-progress
+   - INVESTIGATE before stashing or overwriting
 
 ## Documentation Discipline
 
@@ -53,3 +61,6 @@
 - Don't assume context survives session compaction
 - Don't fall back to forbidden methods when preferred method fails
 - Don't treat user constraints as suggestions
+- **Don't stash without reviewing** - run `git diff` first; stashed work is hidden work
+- **Don't ignore other machines** - uncommitted changes elsewhere may be important features
+- **Don't assume you're the only agent** - another agent may have left work-in-progress yesterday
