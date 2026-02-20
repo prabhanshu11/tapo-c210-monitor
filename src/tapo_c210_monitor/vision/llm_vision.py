@@ -50,7 +50,7 @@ class LLMVision:
         "claude-sonnet": "anthropic/claude-sonnet-4",
         "gpt-4o": "openai/gpt-4o",
         "gpt-4o-mini": "openai/gpt-4o-mini",
-        "gemini-flash": "google/gemini-flash-1.5",
+        "gemini-flash": "google/gemini-2.5-flash", "gemini-3": "google/gemini-3-flash-preview",
     }
 
     def __init__(
