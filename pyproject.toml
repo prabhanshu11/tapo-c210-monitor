@@ -17,6 +17,7 @@ dependencies = [
     "pytesseract>=0.3.13",
     "python-dotenv>=1.2.1",
     "uiautomator2>=3.5.0",
+    "ultralytics>=8.3.0",
     "uvicorn>=0.40.0",
 ]
 

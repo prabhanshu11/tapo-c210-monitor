@@ -21,3 +21,7 @@ apks/tapo_extracted/*.apk
 *.apk
 .env
 ringbuffer/ringbuffer
+
+# Detection database and YOLO model weights
+data/
+*.pt
