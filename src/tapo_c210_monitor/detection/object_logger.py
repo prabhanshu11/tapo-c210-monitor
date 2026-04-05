@@ -205,7 +205,7 @@ class ObjectLogger:
         detections: list[Detection],
         model_name: str = "yolov8n",
         source_device: str = "desktop",
-        source_camera: str = "tapo-c210-192.168.29.183",
+        source_camera: str = "tapo-c210-192.168.50.199",
         frame_path: Optional[str] = None,
         change_score: Optional[float] = None,
         llm_summary: Optional[str] = None,

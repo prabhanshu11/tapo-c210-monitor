@@ -15,7 +15,7 @@ fi
 if [ -z "$TAPO_HOST" ] || [ -z "$TAPO_USERNAME" ] || [ -z "$TAPO_PASSWORD" ]; then
     echo "ERROR: Missing environment variables"
     echo "Create .env file with:"
-    echo "  TAPO_HOST=192.168.29.183"
+    echo "  TAPO_HOST=192.168.50.199"
     echo "  TAPO_USERNAME=your_username"
     echo "  TAPO_PASSWORD=your_password"
     exit 1

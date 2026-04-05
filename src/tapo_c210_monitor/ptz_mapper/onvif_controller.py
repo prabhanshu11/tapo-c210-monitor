@@ -42,7 +42,7 @@ class ONVIFPTZController:
         username: Optional[str] = None,
         password: Optional[str] = None,
     ):
-        self.host = host or os.getenv("TAPO_HOST", "192.168.29.183")
+        self.host = host or os.getenv("TAPO_HOST", "192.168.50.199")
         self.port = port
         self.username = username or os.getenv("TAPO_USERNAME", "")
         self.password = password or os.getenv("TAPO_PASSWORD", "")

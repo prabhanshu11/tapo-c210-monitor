@@ -66,7 +66,7 @@ class ActiveSceneManager:
         settle_time: float = 3.0,
         home_position: tuple[float, float] = (0.0, 0.0),
         source_device: str = "desktop",
-        source_camera: str = "tapo-c210-192.168.29.183",
+        source_camera: str = "tapo-c210-192.168.50.199",
     ):
         self.ringbuffer_url = ringbuffer_url
         self.detector = detector or YOLODetector()

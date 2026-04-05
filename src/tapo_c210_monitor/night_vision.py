@@ -12,7 +12,7 @@ Requirements:
 Usage:
     from tapo_c210_monitor.night_vision import TapoNightVision, NightVisionMode
 
-    nv = TapoNightVision("192.168.29.183", "admin", cloud_password)
+    nv = TapoNightVision("192.168.50.199", "admin", cloud_password)
 
     # Enable night vision (IR LEDs on)
     nv.set_mode(NightVisionMode.ON)
@@ -153,7 +153,7 @@ def get_cloud_password() -> str:
 if __name__ == "__main__":
     import sys
 
-    HOST = "192.168.29.183"
+    HOST = "192.168.50.199"
     USER = "admin"
 
     usage = """

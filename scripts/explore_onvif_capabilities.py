@@ -16,7 +16,7 @@ from onvif import ONVIFCamera
 env_path = Path(__file__).parent.parent / ".env"
 load_dotenv(env_path)
 
-CAMERA_IP = os.getenv("TAPO_HOST", "192.168.29.183")
+CAMERA_IP = os.getenv("TAPO_HOST", "192.168.50.199")
 CAMERA_USER = os.getenv("TAPO_USERNAME", "")
 CAMERA_PASS = os.getenv("TAPO_PASSWORD", "")
 

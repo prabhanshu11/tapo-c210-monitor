@@ -7,7 +7,7 @@ while true; do
     result=$(python3 -c "
 import requests, warnings
 warnings.filterwarnings('ignore')
-resp = requests.post('https://192.168.29.183/stok=/ds', 
+resp = requests.post('https://192.168.50.199/stok=/ds', 
     json={'method': 'login', 'params': {'username': 'x', 'password': 'x'}},
     verify=False, timeout=5)
 data = resp.json()

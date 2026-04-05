@@ -6,7 +6,7 @@ sys.path.insert(0, 'src')
 
 from pytapo import Tapo
 
-HOST = '192.168.29.183'
+HOST = '192.168.50.199'
 USER = 'admin'
 
 # Get password from pass
