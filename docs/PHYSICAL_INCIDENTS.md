@@ -42,6 +42,8 @@ def detect_mount_failure(frames: list[Path]) -> bool:
 2. Consider more permanent mounting solution (screws, dedicated bracket)
 3. Test PTZ range after remount
 
+A basic algorithm was developed and is now part of the code to detect this issue. Needs to develop more test, and an endpoint on an UI.
+
 **User Note**:
 > "the camera had physically been stuck at a position because of it losing the grip from the tape that it was stuck to to the wall. So it was stuck and it fell down on the door."
 
